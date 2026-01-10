@@ -1,6 +1,5 @@
 import { useAudioPlayer } from "expo-audio";
 import * as Haptics from "expo-haptics";
-import { useEffect, useState } from "react";
 import { Button, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
@@ -10,10 +9,9 @@ import { scheduleOnRN } from "react-native-worklets";
 const defaultSuccess = require("@/assets/sounds/success.wav");
 
 export default function HomeScreen() {
-    const [finished, setFinished] = useState(false);
     const player = useAudioPlayer(defaultSuccess);
 
-    const progress = useSharedValue<number>(10);
+    const progress = useSharedValue<number>(0);
     const progressAnimatedStyle = useAnimatedStyle(() => ({
         width: withSpring(`${progress.value}%`),
     }));
@@ -33,7 +31,7 @@ export default function HomeScreen() {
     const longPressGesture = Gesture.LongPress()
         .minDuration(0)
         .onStart(() => {
-            progress.value = withTiming(100, { duration: 1000, easing: Easing.linear }, (finished) => {
+            progress.value = withTiming(100, { duration: 500, easing: Easing.linear }, (finished) => {
                 scheduleOnRN(onFinish, finished);
             });
 
@@ -47,12 +45,6 @@ export default function HomeScreen() {
                 scheduleOnRN(() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy));
             }
         });
-
-    useEffect(() => {
-        if (finished) {
-            console.log("finished");
-        }
-    }, [finished]);
 
     return (
         <SafeAreaView style={{ flex: 1, paddingHorizontal: 10 }}>
