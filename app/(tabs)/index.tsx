@@ -1,93 +1,95 @@
-import { Image } from "expo-image";
-import { Platform, StyleSheet } from "react-native";
-
-import { HelloWave } from "@/components/hello-wave";
-import ParallaxScrollView from "@/components/parallax-scroll-view";
-import { ThemedText } from "@/components/themed-text";
-import { ThemedView } from "@/components/themed-view";
-import { Link } from "expo-router";
+import * as Haptics from "expo-haptics";
+import { useEffect, useState } from "react";
+import { Button, Text, View } from "react-native";
+import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { scheduleOnRN } from "react-native-worklets";
 
 export default function HomeScreen() {
-    return (
-        <ParallaxScrollView
-            headerBackgroundColor={{ light: "#A1CEDC", dark: "#1D3D47" }}
-            headerImage={<Image source={require("@/assets/images/partial-react-logo.png")} style={styles.reactLogo} />}
-        >
-            <ThemedView style={styles.titleContainer}>
-                <ThemedText type="title">Welcome!</ThemedText>
-                <HelloWave />
-            </ThemedView>
-            <ThemedView style={styles.stepContainer}>
-                <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-                <ThemedText>
-                    Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes. Press{" "}
-                    <ThemedText type="defaultSemiBold">
-                        {Platform.select({
-                            ios: "cmd + d",
-                            android: "cmd + m",
-                            web: "F12",
-                        })}
-                    </ThemedText>{" "}
-                    to open developer tools.
-                </ThemedText>
-            </ThemedView>
-            <ThemedView style={styles.stepContainer}>
-                <Link href="/modal">
-                    <Link.Trigger>
-                        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-                    </Link.Trigger>
-                    <Link.Preview />
-                    <Link.Menu>
-                        <Link.MenuAction title="Action" icon="cube" onPress={() => alert("Action pressed")} />
-                        <Link.MenuAction
-                            title="Share"
-                            icon="square.and.arrow.up"
-                            onPress={() => alert("Share pressed")}
-                        />
-                        <Link.Menu title="More" icon="ellipsis">
-                            <Link.MenuAction
-                                title="Delete"
-                                icon="trash"
-                                destructive
-                                onPress={() => alert("Delete pressed")}
-                            />
-                        </Link.Menu>
-                    </Link.Menu>
-                </Link>
+    const [finished, setFinished] = useState(false);
 
-                <ThemedText>
-                    {`Tap the Explore tab to learn more about what's included in this starter app.`}
-                </ThemedText>
-            </ThemedView>
-            <ThemedView style={styles.stepContainer}>
-                <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-                <ThemedText>
-                    {`When you're ready, run `}
-                    <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{" "}
-                    <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{" "}
-                    <ThemedText type="defaultSemiBold">app</ThemedText> to{" "}
-                    <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-                </ThemedText>
-            </ThemedView>
-        </ParallaxScrollView>
+    const progress = useSharedValue<number>(10);
+    const progressAnimatedStyle = useAnimatedStyle(() => ({
+        width: withSpring(`${progress.value}%`),
+    }));
+
+    const onFinish = (finished: boolean | undefined) => {
+        console.log("Animation finished status:", finished);
+
+        if (finished) {
+            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+        }
+        // Update React state or navigate safely here
+    };
+
+    const longPressGesture = Gesture.LongPress()
+        .minDuration(0)
+        .onStart(() => {
+            const duration = 1000;
+            // Start the progress animation linearly
+            progress.value = withTiming(
+                100,
+                { duration: 1000, easing: Easing.bezier(0.25, 0.1, 0.25, 2.0) },
+                (finished, value) => {
+                    // 2. Schedule the JS-thread function from the UI thread
+                    // Use the flat argument syntax: scheduleOnRN(function, ...args)
+                    scheduleOnRN(onFinish, finished);
+                }
+            );
+
+            scheduleOnRN(() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+            });
+
+            // scheduleOnRN(() => {
+            //     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+            // });
+        })
+        .onEnd(() => {
+            if (progress.value < 100) {
+                progress.value = 0;
+                scheduleOnRN(() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy));
+            }
+        });
+
+    useEffect(() => {
+        if (finished) {
+            console.log("finished");
+        }
+    }, [finished]);
+
+    console.log("finished", finished);
+    return (
+        <SafeAreaView style={{ flex: 1, paddingHorizontal: 10 }}>
+            <View
+                style={{
+                    marginTop: 50,
+                    height: 20,
+                    display: "flex",
+                    flexDirection: "row",
+
+                    backgroundColor: "rgba(47, 27, 224, 0.1)",
+                    borderRadius: 10,
+                    overflow: "hidden",
+                }}
+            >
+                <Animated.View style={[progressAnimatedStyle, { backgroundColor: "#ad10b0", height: "100%" }]} />
+            </View>
+
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center", gap: 20 }}>
+                <GestureDetector gesture={longPressGesture}>
+                    <View>
+                        <Text style={{ fontSize: 20 }}>Hold to Start</Text>
+                    </View>
+                </GestureDetector>
+                <Button
+                    title="Reset"
+                    onPress={() => {
+                        progress.value = 0;
+                    }}
+                />
+            </View>
+        </SafeAreaView>
     );
 }
-
-const styles = StyleSheet.create({
-    titleContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8,
-    },
-    stepContainer: {
-        gap: 8,
-        marginBottom: 8,
-    },
-    reactLogo: {
-        height: 178,
-        width: 290,
-        bottom: 0,
-        left: 0,
-        position: "absolute",
-    },
-});
