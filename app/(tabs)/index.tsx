@@ -1,3 +1,4 @@
+import { useAudioPlayer } from "expo-audio";
 import * as Haptics from "expo-haptics";
 import { useEffect, useState } from "react";
 import { Button, Text, View } from "react-native";
@@ -6,8 +7,11 @@ import Animated, { Easing, useAnimatedStyle, useSharedValue, withSpring, withTim
 import { SafeAreaView } from "react-native-safe-area-context";
 import { scheduleOnRN } from "react-native-worklets";
 
+const defaultSuccess = require("@/assets/sounds/success.wav");
+
 export default function HomeScreen() {
     const [finished, setFinished] = useState(false);
+    const player = useAudioPlayer(defaultSuccess);
 
     const progress = useSharedValue<number>(10);
     const progressAnimatedStyle = useAnimatedStyle(() => ({
@@ -15,36 +19,27 @@ export default function HomeScreen() {
     }));
 
     const onFinish = (finished: boolean | undefined) => {
-        console.log("Animation finished status:", finished);
-
         if (finished) {
-            Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            player.seekTo(0);
+            player.play();
+
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+            setTimeout(() => {
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            }, 50);
         }
-        // Update React state or navigate safely here
     };
 
     const longPressGesture = Gesture.LongPress()
         .minDuration(0)
         .onStart(() => {
-            const duration = 1000;
-            // Start the progress animation linearly
-            progress.value = withTiming(
-                100,
-                { duration: 1000, easing: Easing.bezier(0.25, 0.1, 0.25, 2.0) },
-                (finished, value) => {
-                    // 2. Schedule the JS-thread function from the UI thread
-                    // Use the flat argument syntax: scheduleOnRN(function, ...args)
-                    scheduleOnRN(onFinish, finished);
-                }
-            );
-
-            scheduleOnRN(() => {
-                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+            progress.value = withTiming(100, { duration: 1000, easing: Easing.linear }, (finished) => {
+                scheduleOnRN(onFinish, finished);
             });
 
-            // scheduleOnRN(() => {
-            //     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-            // });
+            scheduleOnRN(() => {
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            });
         })
         .onEnd(() => {
             if (progress.value < 100) {
@@ -59,7 +54,6 @@ export default function HomeScreen() {
         }
     }, [finished]);
 
-    console.log("finished", finished);
     return (
         <SafeAreaView style={{ flex: 1, paddingHorizontal: 10 }}>
             <View
