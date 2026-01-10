@@ -8,13 +8,14 @@ export default function TabLayout() {
 
     return (
         <NativeTabs>
+            <NativeTabs.Trigger name="explore">
+                <Icon sf={{ default: "doc.text", selected: "doc.text.fill" }} />
+                <Label>Journal</Label>
+            </NativeTabs.Trigger>
+
             <NativeTabs.Trigger name="index">
                 <Icon sf={{ default: "heart", selected: "heart.fill" }} />
                 <Label>Home</Label>
-            </NativeTabs.Trigger>
-            <NativeTabs.Trigger name="explore">
-                <Icon sf={{ default: "paperplane", selected: "paperplane.fill" }} />
-                <Label>Explore</Label>
             </NativeTabs.Trigger>
         </NativeTabs>
     );
