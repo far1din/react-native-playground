@@ -16,7 +16,7 @@ type DayItem = {
 };
 type Week = DayItem[];
 
-export default function CalendarComponent() {
+export default function CalendarComponent({ children }: { children: React.ReactNode }) {
     const [weeks, setWeeks] = useState<Week[]>([]);
     const [currentMonthStr, setCurrentMonthStr] = useState<string>("");
     const listRef = useRef<FlatList<Week>>(null);
@@ -111,20 +111,9 @@ export default function CalendarComponent() {
                         console.log(day.date.toISODate());
                     }}
                 >
+                    {day.isToday && children}
                     <Text style={styles.dayLabel}>{day.date.toFormat("ccc")}</Text>
                     <Text style={[styles.dayText, day.isToday && styles.todayText]}>{day.date.toFormat("dd")}</Text>
-
-                    {day.isToday && (
-                        <View
-                            style={{
-                                width: "100%",
-                                height: 10,
-                                backgroundColor: "blue",
-                                position: "absolute",
-                                bottom: 0,
-                            }}
-                        />
-                    )}
                 </Pressable>
             ))}
         </View>
@@ -144,7 +133,7 @@ export default function CalendarComponent() {
                 horizontal
                 pagingEnabled
                 keyExtractor={(_, i) => i.toString()}
-                renderItem={renderWeek}
+                renderItem={(item) => renderWeek(item)}
                 // Fixed: removed the (-40) which causes drift
                 getItemLayout={(_, index) => ({
                     length: WINDOW_WIDTH,
@@ -183,7 +172,7 @@ const styles = StyleSheet.create({
     dayBox: {
         alignItems: "center",
         justifyContent: "center",
-        paddingVertical: 10,
+        height: 70,
         width: (WINDOW_WIDTH - 40) / 7,
         borderRadius: 12,
         backgroundColor: "#FBE8FF",

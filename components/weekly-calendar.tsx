@@ -40,7 +40,7 @@ export function WeeklyCalendar() {
     const longPressGesture = Gesture.LongPress()
         .minDuration(0)
         .onStart(() => {
-            progress.value = withTiming(250, { duration: 500, easing: Easing.linear }, (finished) => {
+            progress.value = withTiming(140, { duration: 500, easing: Easing.linear }, (finished) => {
                 scheduleOnRN(onFinish, finished);
             });
 
@@ -49,7 +49,7 @@ export function WeeklyCalendar() {
             });
         })
         .onEnd(() => {
-            if (progress.value < 250) {
+            if (progress.value < 140) {
                 progress.value = 0;
                 scheduleOnRN(() => Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy));
             }
@@ -64,6 +64,7 @@ export function WeeklyCalendar() {
                     {/* <IconSymbol name="checkmark.circle.fill" size={20} color="white" /> */}
                 </View>
                 <View style={styles.dayContainer}>
+                    <Animated.View style={[styles.dayContainerInner, progressAnimatedStyle]} />
                     <ThemedText>T</ThemedText>
                 </View>
                 <View style={styles.dayContainer}>
@@ -84,7 +85,9 @@ export function WeeklyCalendar() {
             </View>
 
             <NumberIncrementor maxNumber={maxNumber} selectedNumber={selectedNumber} />
-            <CalendarComponent />
+            <CalendarComponent>
+                <Animated.View style={[styles.dayContainerInner, progressAnimatedStyle]} />
+            </CalendarComponent>
 
             <View
                 style={{
