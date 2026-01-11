@@ -1,6 +1,7 @@
+import * as Haptics from "expo-haptics";
 import { DateTime } from "luxon";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Dimensions, FlatList, StyleSheet, Text, View } from "react-native";
+import { Dimensions, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
 
 const WINDOW_WIDTH = Dimensions.get("window").width - 40; // 40 is the padding of the container
 const DAYS_IN_WEEK = 7;
@@ -102,10 +103,29 @@ export default function CalendarComponent() {
     const renderWeek = ({ item }: { item: Week }) => (
         <View style={styles.weekRow}>
             {item.map((day) => (
-                <View key={day.date.toISODate()} style={[styles.dayBox, day.isToday && styles.todayHighlight]}>
+                <Pressable
+                    key={day.date.toISODate()}
+                    style={[styles.dayBox]}
+                    onPress={() => {
+                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                        console.log(day.date.toISODate());
+                    }}
+                >
                     <Text style={styles.dayLabel}>{day.date.toFormat("ccc")}</Text>
                     <Text style={[styles.dayText, day.isToday && styles.todayText]}>{day.date.toFormat("dd")}</Text>
-                </View>
+
+                    {day.isToday && (
+                        <View
+                            style={{
+                                width: "100%",
+                                height: 10,
+                                backgroundColor: "blue",
+                                position: "absolute",
+                                bottom: 0,
+                            }}
+                        />
+                    )}
+                </Pressable>
             ))}
         </View>
     );
@@ -163,8 +183,11 @@ const styles = StyleSheet.create({
     dayBox: {
         alignItems: "center",
         justifyContent: "center",
-        padding: 10,
+        paddingVertical: 10,
+        width: (WINDOW_WIDTH - 40) / 7,
         borderRadius: 12,
+        backgroundColor: "#FBE8FF",
+        overflow: "hidden",
     },
     dayLabel: {
         fontSize: 12,
@@ -178,9 +201,15 @@ const styles = StyleSheet.create({
         color: "#333",
     },
     todayHighlight: {
-        backgroundColor: "#2196F3", // A nice blue for today
+        backgroundColor: "#00ef0e", // A nice blue for today
     },
     todayText: {
+        width: 30,
+        borderRadius: 15,
+        alignItems: "center",
+        justifyContent: "center",
+        textAlign: "center",
+        backgroundColor: "#bf00f0",
         color: "#fff",
     },
 });
