@@ -20,6 +20,10 @@ export function WeeklyCalendar() {
         height: withSpring(`${progress.value}%`),
     }));
 
+    const progressTextColorStyle = useAnimatedStyle(() => ({
+        color: withTiming(progress.value > 100 ? `#ffffff` : `#000000`, { duration: 100, easing: Easing.linear }),
+    }));
+
     const onFinish = (finished: boolean | undefined) => {
         if (finished) {
             player.seekTo(0);
@@ -57,7 +61,7 @@ export function WeeklyCalendar() {
         <View style={{ flex: 1, gap: 40, marginTop: 40 }}>
             <NumberIncrementor maxNumber={maxNumber} selectedNumber={selectedNumber} />
 
-            <CalendarComponent>
+            <CalendarComponent progressTextColorStyle={progressTextColorStyle}>
                 <Animated.View style={[styles.dayContainerInner, progressAnimatedStyle]} />
             </CalendarComponent>
 

@@ -1,7 +1,8 @@
 import * as Haptics from "expo-haptics";
 import { DateTime } from "luxon";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Dimensions, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { Dimensions, FlatList, Pressable, StyleProp, StyleSheet, Text, TextStyle, View } from "react-native";
+import Animated from "react-native-reanimated";
 import { IconSymbol } from "./ui/icon-symbol";
 
 const WINDOW_WIDTH = Dimensions.get("window").width - 40; // 40 is the padding of the container
@@ -17,7 +18,13 @@ type DayItem = {
 };
 type Week = DayItem[];
 
-export default function CalendarComponent({ children }: { children: React.ReactNode }) {
+export default function CalendarComponent({
+    children,
+    progressTextColorStyle,
+}: {
+    children: React.ReactNode;
+    progressTextColorStyle: StyleProp<TextStyle>;
+}) {
     const [weeks, setWeeks] = useState<Week[]>([]);
     const [currentMonthStr, setCurrentMonthStr] = useState<string>("");
     const listRef = useRef<FlatList<Week>>(null);
@@ -114,12 +121,20 @@ export default function CalendarComponent({ children }: { children: React.ReactN
                 >
                     {day.isToday && children}
                     {/* <Text style={styles.dayLabel}>{day.date.toFormat("ccc")}</Text> */}
-                    <Text style={[styles.dayText, day.isToday && styles.todayText]}>{day.date.toFormat("d")}</Text>
+                    <Animated.Text
+                        style={[styles.dayText, day.isToday && styles.todayText, day.isToday && progressTextColorStyle]}
+                    >
+                        {day.date.toFormat("d")}
+                    </Animated.Text>
                     {/* <View
                         style={{ height: 8, width: 8, backgroundColor: "#c192ff", borderRadius: 100, marginTop: 4 }}
                     /> */}
 
-                    <IconSymbol name="circle.fill" size={14} style={{ marginTop: 4 }} color="lightgray" />
+                    {day.isToday ? (
+                        <IconSymbol name="checkmark.circle.fill" size={18} style={{ marginTop: 4 }} color="#FBE8FF" />
+                    ) : (
+                        <IconSymbol name="xmark.circle.fill" size={18} style={{ marginTop: 4 }} color="#FF6161" />
+                    )}
                 </Pressable>
             ))}
         </View>
@@ -160,14 +175,14 @@ const styles = StyleSheet.create({
         backgroundColor: "transparent",
     },
     header: {
-        paddingHorizontal: 16,
-        paddingBottom: 10,
-        alignItems: "center",
+        paddingHorizontal: 8,
+        paddingBottom: 14,
+        alignItems: "flex-start",
         justifyContent: "center",
     },
     headerText: {
         fontSize: 20,
-        fontWeight: "bold",
+        fontWeight: "600",
         color: "#333",
     },
     weekRow: {
