@@ -1,15 +1,19 @@
 import { useAudioPlayer } from "expo-audio";
 import * as Haptics from "expo-haptics";
+import { useState } from "react";
 import { Button, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
+import NumberIncrementor from "./number-incrementor";
 import { ThemedText } from "./themed-text";
 
 const defaultSuccess = require("@/assets/sounds/success-2.mp3");
 
 export function WeeklyCalendar() {
     const player = useAudioPlayer(defaultSuccess);
+    const [selectedNumber, setSelectedNumber] = useState(10);
+    const [maxNumber, setMaxNumber] = useState(30);
 
     const progress = useSharedValue<number>(0);
     const progressAnimatedStyle = useAnimatedStyle(() => ({
@@ -25,6 +29,8 @@ export function WeeklyCalendar() {
                 Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
             }, 50);
             setTimeout(() => {
+                setSelectedNumber((prev) => prev + 1);
+                setMaxNumber((prev) => selectedNumber + 5);
                 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
             }, 100);
         }
@@ -75,6 +81,8 @@ export function WeeklyCalendar() {
                     <ThemedText>S</ThemedText>
                 </View>
             </View>
+
+            <NumberIncrementor maxNumber={maxNumber} selectedNumber={selectedNumber} />
 
             <View
                 style={{
