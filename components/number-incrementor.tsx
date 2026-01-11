@@ -27,10 +27,6 @@ export default function NumberIncrementor({
         };
     });
 
-    const pickNumber = (num: number) => {
-        selected.value = num;
-    };
-
     useEffect(() => {
         selected.value = selectedNumber;
     }, [selectedNumber]);
@@ -60,7 +56,7 @@ const styles = StyleSheet.create({
     },
     window: {
         height: ITEM_HEIGHT,
-        width: 80,
+        width: 150,
 
         overflow: "hidden",
         borderRadius: 5,
