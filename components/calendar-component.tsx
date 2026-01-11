@@ -142,9 +142,7 @@ export default function CalendarComponent() {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        paddingTop: 50, // safe area spacing
-        backgroundColor: "#fff",
+        backgroundColor: "transparent",
     },
     header: {
         paddingHorizontal: 16,

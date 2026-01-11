@@ -55,7 +55,7 @@ export function WeeklyCalendar() {
             }
         });
     return (
-        <>
+        <View style={{ flex: 1, gap: 40 }}>
             <View style={{ flexDirection: "row", gap: 8 }}>
                 <View style={styles.dayContainer}>
                     <Animated.View style={[styles.dayContainerInner, progressAnimatedStyle]} />
@@ -122,7 +122,7 @@ export function WeeklyCalendar() {
                     }}
                 />
             </View>
-        </>
+        </View>
     );
 }
 
