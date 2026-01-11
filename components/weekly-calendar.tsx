@@ -7,7 +7,6 @@ import Animated, { Easing, useAnimatedStyle, useSharedValue, withSpring, withTim
 import { scheduleOnRN } from "react-native-worklets";
 import CalendarComponent from "./calendar-component";
 import NumberIncrementor from "./number-incrementor";
-import { ThemedText } from "./themed-text";
 
 const defaultSuccess = require("@/assets/sounds/success-2.mp3");
 
@@ -55,36 +54,9 @@ export function WeeklyCalendar() {
             }
         });
     return (
-        <View style={{ flex: 1, gap: 40 }}>
-            <View style={{ flexDirection: "row", gap: 8 }}>
-                <View style={styles.dayContainer}>
-                    <Animated.View style={[styles.dayContainerInner, progressAnimatedStyle]} />
-                    <ThemedText>M</ThemedText>
-
-                    {/* <IconSymbol name="checkmark.circle.fill" size={20} color="white" /> */}
-                </View>
-                <View style={styles.dayContainer}>
-                    <Animated.View style={[styles.dayContainerInner, progressAnimatedStyle]} />
-                    <ThemedText>T</ThemedText>
-                </View>
-                <View style={styles.dayContainer}>
-                    <ThemedText>W</ThemedText>
-                </View>
-                <View style={styles.dayContainer}>
-                    <ThemedText>T</ThemedText>
-                </View>
-                <View style={styles.dayContainer}>
-                    <ThemedText>F</ThemedText>
-                </View>
-                <View style={styles.dayContainer}>
-                    <ThemedText>S</ThemedText>
-                </View>
-                <View style={styles.dayContainer}>
-                    <ThemedText>S</ThemedText>
-                </View>
-            </View>
-
+        <View style={{ flex: 1, gap: 40, marginTop: 40 }}>
             <NumberIncrementor maxNumber={maxNumber} selectedNumber={selectedNumber} />
+
             <CalendarComponent>
                 <Animated.View style={[styles.dayContainerInner, progressAnimatedStyle]} />
             </CalendarComponent>

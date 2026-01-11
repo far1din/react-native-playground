@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
 
         overflow: "hidden",
         borderRadius: 5,
-        backgroundColor: "#FBE8FF",
+        // backgroundColor: "#FBE8FF",
     },
     item: {
         height: ITEM_HEIGHT,
