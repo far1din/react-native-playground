@@ -10,7 +10,7 @@ import NumberIncrementor from "./number-incrementor";
 
 const defaultSuccess = require("@/assets/sounds/success-2.mp3");
 
-export function WeeklyCalendar() {
+export function WeeklyCalendar({ checkedInDates }: { checkedInDates: string[] }) {
     const player = useAudioPlayer(defaultSuccess);
     const [selectedNumber, setSelectedNumber] = useState(10);
     const [maxNumber, setMaxNumber] = useState(30);
@@ -61,7 +61,7 @@ export function WeeklyCalendar() {
         <View style={{ flex: 1, gap: 40, marginTop: 40 }}>
             <NumberIncrementor maxNumber={maxNumber} selectedNumber={selectedNumber} />
 
-            <CalendarComponent progressTextColorStyle={progressTextColorStyle}>
+            <CalendarComponent progressTextColorStyle={progressTextColorStyle} checkedInDates={checkedInDates}>
                 <Animated.View style={[styles.dayContainerInner, progressAnimatedStyle]} />
             </CalendarComponent>
 

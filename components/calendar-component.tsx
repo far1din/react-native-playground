@@ -21,9 +21,11 @@ type Week = DayItem[];
 export default function CalendarComponent({
     children,
     progressTextColorStyle,
+    checkedInDates,
 }: {
     children: React.ReactNode;
     progressTextColorStyle: StyleProp<TextStyle>;
+    checkedInDates: string[];
 }) {
     const [weeks, setWeeks] = useState<Week[]>([]);
     const [currentMonthStr, setCurrentMonthStr] = useState<string>("");
@@ -110,33 +112,50 @@ export default function CalendarComponent({
     // Render one week
     const renderWeek = ({ item }: { item: Week }) => (
         <View style={styles.weekRow}>
-            {item.map((day) => (
-                <Pressable
-                    key={day.date.toISODate()}
-                    style={[styles.dayBox, { borderColor: day.isToday ? "#bf00f0" : "transparent", borderWidth: 1 }]}
-                    onPress={() => {
-                        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                        console.log(day.date.toISODate());
-                    }}
-                >
-                    {day.isToday && children}
-                    {/* <Text style={styles.dayLabel}>{day.date.toFormat("ccc")}</Text> */}
-                    <Animated.Text
-                        style={[styles.dayText, day.isToday && styles.todayText, day.isToday && progressTextColorStyle]}
+            {item.map((day) => {
+                const isCheckedIn = checkedInDates.includes(day.date.toISODate() || "");
+                return (
+                    <Pressable
+                        key={day.date.toISODate()}
+                        style={[
+                            styles.dayBox,
+                            { borderColor: day.isToday ? "#bf00f0" : "transparent", borderWidth: 1 },
+                            isCheckedIn && { backgroundColor: "#bf00f0" },
+                        ]}
+                        onPress={() => {
+                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                            console.log(day.date.toISODate());
+                        }}
                     >
-                        {day.date.toFormat("d")}
-                    </Animated.Text>
-                    {/* <View
+                        {day.isToday && children}
+                        {/* <Text style={styles.dayLabel}>{day.date.toFormat("ccc")}</Text> */}
+                        <Animated.Text
+                            style={[
+                                styles.dayText,
+                                day.isToday && styles.todayText,
+                                day.isToday && progressTextColorStyle,
+                                isCheckedIn && { color: "#FBE8FF" },
+                            ]}
+                        >
+                            {day.date.toFormat("d")}
+                        </Animated.Text>
+                        {/* <View
                         style={{ height: 8, width: 8, backgroundColor: "#c192ff", borderRadius: 100, marginTop: 4 }}
                     /> */}
 
-                    {day.isToday ? (
-                        <IconSymbol name="checkmark.circle.fill" size={18} style={{ marginTop: 4 }} color="#FBE8FF" />
-                    ) : (
-                        <IconSymbol name="xmark.circle.fill" size={18} style={{ marginTop: 4 }} color="#FF6161" />
-                    )}
-                </Pressable>
-            ))}
+                        {isCheckedIn ? (
+                            <IconSymbol
+                                name="checkmark.circle.fill"
+                                size={18}
+                                style={{ marginTop: 4 }}
+                                color="#FBE8FF"
+                            />
+                        ) : (
+                            <IconSymbol name="xmark.circle.fill" size={18} style={{ marginTop: 4 }} color="#FF6161" />
+                        )}
+                    </Pressable>
+                );
+            })}
         </View>
     );
 
