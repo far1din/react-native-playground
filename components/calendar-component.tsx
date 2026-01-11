@@ -2,6 +2,7 @@ import * as Haptics from "expo-haptics";
 import { DateTime } from "luxon";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Dimensions, FlatList, Pressable, StyleSheet, Text, View } from "react-native";
+import { IconSymbol } from "./ui/icon-symbol";
 
 const WINDOW_WIDTH = Dimensions.get("window").width - 40; // 40 is the padding of the container
 const DAYS_IN_WEEK = 7;
@@ -105,15 +106,20 @@ export default function CalendarComponent({ children }: { children: React.ReactN
             {item.map((day) => (
                 <Pressable
                     key={day.date.toISODate()}
-                    style={[styles.dayBox]}
+                    style={[styles.dayBox, { borderColor: day.isToday ? "#bf00f0" : "transparent", borderWidth: 1 }]}
                     onPress={() => {
                         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                         console.log(day.date.toISODate());
                     }}
                 >
                     {day.isToday && children}
-                    <Text style={styles.dayLabel}>{day.date.toFormat("ccc")}</Text>
-                    <Text style={[styles.dayText, day.isToday && styles.todayText]}>{day.date.toFormat("dd")}</Text>
+                    {/* <Text style={styles.dayLabel}>{day.date.toFormat("ccc")}</Text> */}
+                    <Text style={[styles.dayText, day.isToday && styles.todayText]}>{day.date.toFormat("d")}</Text>
+                    {/* <View
+                        style={{ height: 8, width: 8, backgroundColor: "#c192ff", borderRadius: 100, marginTop: 4 }}
+                    /> */}
+
+                    <IconSymbol name="circle.fill" size={14} style={{ marginTop: 4 }} color="lightgray" />
                 </Pressable>
             ))}
         </View>
@@ -174,8 +180,8 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         height: 70,
         width: (WINDOW_WIDTH - 40) / 7,
-        borderRadius: 12,
-        backgroundColor: "#FBE8FF",
+        borderRadius: 30,
+        backgroundColor: "#f9f4ff",
         overflow: "hidden",
     },
     dayLabel: {
@@ -198,7 +204,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         justifyContent: "center",
         textAlign: "center",
-        backgroundColor: "#bf00f0",
-        color: "#fff",
+        color: "#bf00f0",
     },
 });
