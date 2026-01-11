@@ -5,6 +5,7 @@ import { Button, StyleSheet, Text, View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, { Easing, useAnimatedStyle, useSharedValue, withSpring, withTiming } from "react-native-reanimated";
 import { scheduleOnRN } from "react-native-worklets";
+import CalendarComponent from "./calendar-component";
 import NumberIncrementor from "./number-incrementor";
 import { ThemedText } from "./themed-text";
 
@@ -83,6 +84,7 @@ export function WeeklyCalendar() {
             </View>
 
             <NumberIncrementor maxNumber={maxNumber} selectedNumber={selectedNumber} />
+            <CalendarComponent />
 
             <View
                 style={{
