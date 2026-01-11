@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
         width: "100%",
         bottom: 0,
         position: "absolute",
-        backgroundColor: "#AD10B0",
+        backgroundColor: "#bf00f0",
         borderTopLeftRadius: 80,
         borderTopRightRadius: 20,
     },

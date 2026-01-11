@@ -1,4 +1,3 @@
-import * as Haptics from "expo-haptics";
 import { DateTime } from "luxon";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Dimensions, FlatList, Pressable, StyleProp, StyleSheet, Text, TextStyle, View } from "react-native";
@@ -113,7 +112,10 @@ export default function CalendarComponent({
     const renderWeek = ({ item }: { item: Week }) => (
         <View style={styles.weekRow}>
             {item.map((day) => {
+                const today = DateTime.local();
+                const isFutureDate = day.date > today;
                 const isCheckedIn = checkedInDates.includes(day.date.toISODate() || "");
+
                 return (
                     <Pressable
                         key={day.date.toISODate()}
@@ -122,10 +124,7 @@ export default function CalendarComponent({
                             { borderColor: day.isToday ? "#bf00f0" : "transparent", borderWidth: 1 },
                             isCheckedIn && { backgroundColor: "#bf00f0" },
                         ]}
-                        onPress={() => {
-                            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-                            console.log(day.date.toISODate());
-                        }}
+                        // onPress={() => console.log()}
                     >
                         {day.isToday && children}
                         {/* <Text style={styles.dayLabel}>{day.date.toFormat("ccc")}</Text> */}
@@ -135,6 +134,7 @@ export default function CalendarComponent({
                                 day.isToday && styles.todayText,
                                 day.isToday && progressTextColorStyle,
                                 isCheckedIn && { color: "#FBE8FF" },
+                                isFutureDate && { color: "lightgray" },
                             ]}
                         >
                             {day.date.toFormat("d")}
@@ -143,7 +143,9 @@ export default function CalendarComponent({
                         style={{ height: 8, width: 8, backgroundColor: "#c192ff", borderRadius: 100, marginTop: 4 }}
                     /> */}
 
-                        {isCheckedIn ? (
+                        {isFutureDate ? (
+                            <IconSymbol name="circle.fill" size={12} style={{ marginTop: 10 }} color="lightgray" />
+                        ) : isCheckedIn ? (
                             <IconSymbol
                                 name="checkmark.circle.fill"
                                 size={18}
