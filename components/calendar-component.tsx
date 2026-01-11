@@ -6,6 +6,7 @@ import { IconSymbol } from "./ui/icon-symbol";
 
 const WINDOW_WIDTH = Dimensions.get("window").width - 40; // 40 is the padding of the container
 const DAYS_IN_WEEK = 7;
+
 // How far back and forward you want to generate
 const MONTHS_BACK = 12;
 const MONTHS_FORWARD = 12;
@@ -152,6 +153,8 @@ export default function CalendarComponent({
                                 style={{ marginTop: 4 }}
                                 color="#FBE8FF"
                             />
+                        ) : day.isToday ? (
+                            <IconSymbol name="circle.fill" size={18} style={{ marginTop: 4 }} color="white" />
                         ) : (
                             <IconSymbol name="xmark.circle.fill" size={18} style={{ marginTop: 4 }} color="#FF6161" />
                         )}
