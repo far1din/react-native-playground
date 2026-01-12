@@ -1,3 +1,4 @@
+import { IconSymbol } from "@/components/ui/icon-symbol";
 import { useAudioPlayer } from "expo-audio";
 import * as Haptics from "expo-haptics";
 import { Button, Text, View } from "react-native";
@@ -46,6 +47,13 @@ export default function HomeScreen() {
             }
         });
 
+    const successIconStyle = useAnimatedStyle(() => ({
+        opacity: withTiming(progress.value > 30 ? 1 : 0, { duration: 500 }),
+    }));
+    const failureIconStyle = useAnimatedStyle(() => ({
+        opacity: withTiming(progress.value > 30 ? 0 : 1, { duration: 500 }),
+    }));
+
     return (
         <SafeAreaView style={{ flex: 1, paddingHorizontal: 10 }}>
             <View
@@ -61,6 +69,28 @@ export default function HomeScreen() {
                 }}
             >
                 <Animated.View style={[progressAnimatedStyle, { backgroundColor: "#ad10b0", height: "100%" }]} />
+            </View>
+
+            <View
+                style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: 18,
+                    height: 18,
+                    marginHorizontal: "auto",
+                }}
+            >
+                <Animated.View
+                    style={[successIconStyle, { position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }]}
+                >
+                    <IconSymbol name="checkmark.circle.fill" size={18} color="green" />
+                </Animated.View>
+
+                <Animated.View
+                    style={[failureIconStyle, { position: "absolute", top: 0, left: 0, right: 0, bottom: 0 }]}
+                >
+                    <IconSymbol name="xmark.circle.fill" size={18} color="red" />
+                </Animated.View>
             </View>
 
             <View style={{ flex: 1, justifyContent: "center", alignItems: "center", gap: 20 }}>
