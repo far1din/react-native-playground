@@ -24,6 +24,10 @@ export function WeeklyCalendar({ checkedInDates }: { checkedInDates: string[] })
         color: withTiming(progress.value > 100 ? `#ffffff` : `#000000`, { duration: 100, easing: Easing.linear }),
     }));
 
+    const todayCheckedInStyle = useAnimatedStyle(() => ({
+        opacity: withTiming(progress.value > 30 ? 1 : 0, { duration: 500 }),
+    }));
+
     const onFinish = (finished: boolean | undefined) => {
         if (finished) {
             player.seekTo(0);
@@ -61,7 +65,11 @@ export function WeeklyCalendar({ checkedInDates }: { checkedInDates: string[] })
         <View style={{ flex: 1, gap: 40, marginTop: 40 }}>
             <NumberIncrementor maxNumber={maxNumber} selectedNumber={selectedNumber} />
 
-            <CalendarComponent progressTextColorStyle={progressTextColorStyle} checkedInDates={checkedInDates}>
+            <CalendarComponent
+                progressTextColorStyle={progressTextColorStyle}
+                checkedInDates={checkedInDates}
+                todayCheckedInStyle={todayCheckedInStyle}
+            >
                 <Animated.View style={[styles.dayContainerInner, progressAnimatedStyle]} />
             </CalendarComponent>
 

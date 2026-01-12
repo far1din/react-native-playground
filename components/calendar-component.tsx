@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { Dimensions, FlatList, Pressable, StyleProp, StyleSheet, Text, TextStyle, View } from "react-native";
+import { Dimensions, FlatList, Pressable, StyleProp, StyleSheet, Text, TextStyle, View, ViewStyle } from "react-native";
 import Animated from "react-native-reanimated";
 import { IconSymbol } from "./ui/icon-symbol";
 
@@ -22,10 +22,12 @@ export default function CalendarComponent({
     children,
     progressTextColorStyle,
     checkedInDates,
+    todayCheckedInStyle,
 }: {
     children: React.ReactNode;
     progressTextColorStyle: StyleProp<TextStyle>;
     checkedInDates: string[];
+    todayCheckedInStyle: StyleProp<ViewStyle>;
 }) {
     const [weeks, setWeeks] = useState<Week[]>([]);
     const [currentMonthStr, setCurrentMonthStr] = useState<string>("");
@@ -145,7 +147,7 @@ export default function CalendarComponent({
                     /> */}
 
                         {isFutureDate ? (
-                            <IconSymbol name="circle.fill" size={12} style={{ marginTop: 10 }} color="lightgray" />
+                            <IconSymbol name="circle" size={18} style={{ marginTop: 4 }} color="lightgray" />
                         ) : isCheckedIn ? (
                             <IconSymbol
                                 name="checkmark.circle.fill"
@@ -154,7 +156,22 @@ export default function CalendarComponent({
                                 color="#FBE8FF"
                             />
                         ) : day.isToday ? (
-                            <IconSymbol name="circle.fill" size={18} style={{ marginTop: 4 }} color="white" />
+                            <View style={{ height: 18, width: 18, marginTop: 4 }}>
+                                <IconSymbol
+                                    name="circle"
+                                    size={18}
+                                    style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}
+                                    color="#bf00f0"
+                                />
+                                <Animated.View
+                                    style={[
+                                        todayCheckedInStyle,
+                                        { position: "absolute", bottom: 0, left: 0, right: 0 },
+                                    ]}
+                                >
+                                    <IconSymbol name="checkmark.circle.fill" size={18} color="#FBE8FF" />
+                                </Animated.View>
+                            </View>
                         ) : (
                             <IconSymbol name="xmark.circle.fill" size={18} style={{ marginTop: 4 }} color="#FF6161" />
                         )}
