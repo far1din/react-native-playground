@@ -162,6 +162,7 @@ export default function CalendarComponent({
                                     size={18}
                                     style={{ position: "absolute", bottom: 0, left: 0, right: 0 }}
                                     color="#bf00f0"
+                                    weight="bold"
                                 />
                                 <Animated.View
                                     style={[
